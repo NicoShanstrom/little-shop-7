@@ -14,7 +14,6 @@ RSpec.describe Coupon, type: :model do
     it { should validate_presence_of(:name) }
     it { should validate_presence_of(:code) }
     it { should validate_presence_of(:discount_amount) }
-    it { should validate_presence_of(:percent_off) }
     it { should validate_presence_of(:status) }
   end
 

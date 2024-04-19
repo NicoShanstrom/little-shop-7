@@ -8,6 +8,5 @@ class Coupon < ApplicationRecord
   validates :name, presence: true
   validates :code, presence: true
   validates :discount_amount, presence: true
-  validates :percent_off, presence: true
   validates :status, presence: true
 end
