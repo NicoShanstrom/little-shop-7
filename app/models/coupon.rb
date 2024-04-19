@@ -1,4 +1,6 @@
 class Coupon < ApplicationRecord
+  enum :status, ['active', 'inactive'], validate: true
+  
   belongs_to :merchant
   has_many :invoices
   has_many :customers, through: :invoices

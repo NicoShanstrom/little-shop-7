@@ -17,4 +17,8 @@ RSpec.describe Coupon, type: :model do
     it { should validate_presence_of(:percent_off) }
     it { should validate_presence_of(:status) }
   end
+
+  describe "enums" do
+    it { should define_enum_for(:status).with_values({ 'active' => 0, 'inactive' => 1 }) }
+  end
 end
