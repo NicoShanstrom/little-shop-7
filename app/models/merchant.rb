@@ -6,6 +6,8 @@ class Merchant < ApplicationRecord
   has_many :invoices, through: :invoice_items
   has_many :transactions, through: :invoices
   has_many :customers, through: :invoices
+  has_many :coupons
+  has_many :invoices_w_coupons, through: :coupons, source: :invoices #distinguish which relationship path it is taking as to not interfere with the previous relationship
 
   validates :name, presence: true
 

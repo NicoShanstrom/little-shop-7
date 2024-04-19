@@ -1,7 +1,6 @@
 require "rails_helper"
 
 RSpec.describe Merchant, type: :model do
-
   before(:each) do
     @merchant1 = create(:merchant)
 
@@ -55,6 +54,7 @@ RSpec.describe Merchant, type: :model do
     it { should have_many(:invoices).through(:invoice_items) }
     it { should have_many(:transactions).through(:invoices) }
     it { should have_many(:customers).through(:invoices) }
+    it { should have_many(:invoices_w_coupons).through(:coupons).source(:invoices) }
   end
 
   describe "validations" do
