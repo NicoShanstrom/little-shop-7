@@ -4,12 +4,12 @@ RSpec.describe 'merchant dashboard show page', type: :feature do
   before(:each) do
     @merchant1 = create(:merchant)
     # @merchant2 = create(:merchant)
-    @coupon1 = @merchant1.coupons.create!(name: "5 off", code: "I got five on it", discount_amount: 5, status: 0)
-    @coupon2 = @merchant1.coupons.create!(name: "10 off", code: "Its a ten", discount_amount: 10, percent_off: true, status: 0)
-    @coupon3 = @merchant1.coupons.create!(name: "7 off", code: "Lucky 7", discount_amount: 7, status: 0)
-    @coupon4 = @merchant1.coupons.create!(name: "15 off", code: "Buy more", discount_amount: 15, percent_off: true, status: 0)
-    @coupon5 = @merchant1.coupons.create!(name: "11 off", code: "Make a wish", discount_amount: 11, status: 0)
-    @coupon6 = @merchant1.coupons.create!(name: "40 off", code: "40 off of freedom", discount_amount: 40, percent_off: true, status: 1)
+    @coupon1 = @merchant1.coupons.create!(name: "5 off", code: "I got five on it", discount_amount: 5, percent_off: false, status: 0)
+    @coupon2 = @merchant1.coupons.create!(name: "10 off", code: "Its a ten", discount_amount: 10, status: 0)
+    @coupon3 = @merchant1.coupons.create!(name: "7 off", code: "Lucky 7", discount_amount: 7, percent_off: false, status: 0)
+    @coupon4 = @merchant1.coupons.create!(name: "15 off", code: "Buy more", discount_amount: 15, status: 0)
+    @coupon5 = @merchant1.coupons.create!(name: "11 off", code: "Make a wish", discount_amount: 11, percent_off: false, status: 0)
+    @coupon6 = @merchant1.coupons.create!(name: "40 off", code: "40 off of freedom", discount_amount: 40, status: 1)
 
     @table = create(:item, name: "table", merchant: @merchant1)
     @pen = create(:item, name: "pen", merchant: @merchant1)
@@ -110,13 +110,12 @@ RSpec.describe 'merchant dashboard show page', type: :feature do
       expect(current_path).to eq(merchant_coupons_path(@merchant1))
       # Where I see all of my coupon names including their amount off
       # And each coupon's name is also a link to its show page.
-      within ".coupons .coupon-#{@coupon1}" do
-        expect(page).to have_content() 
-        expect(page).to have_content() 
-        expect(page).to have_content() 
-        expect(page).to have_content() 
-        expect(page).to have_content() 
-        expect(page).to have_content()
+      within ".coupons .coupon-#{@coupon1.id}" do
+        expect(page).to have_content("Coupon name: #{@coupon1.name}") 
+        expect(page).to have_link("#{@coupon1.name}", href: merchant_coupon_path(@merchant1, @coupon1)) 
+        expect(page).to have_content("Discount amount: #{@coupon1.discount_amount}") 
+        expect(page).to have_content("Percent discount?: #{@coupon1.percent_off}")
+        expect(page).to_not have_content("Coupon name: #{@coupon2.name}")
       end
     end
   end
