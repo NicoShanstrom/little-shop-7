@@ -50,16 +50,47 @@ RSpec.describe 'merchant dashboard show page', type: :feature do
     visit merchant_coupons_path(@merchant1)
   end
 
-I see a link to create a new coupon.
-When I click that link 
-I am taken to a new page where I see a form to add a new coupon.
-When I fill in that form with a name, unique code, an amount, and whether that amount is a percent or a dollar amount
-And click the Submit button
-I'm taken back to the coupon index page 
-And I can see my new coupon listed.
+  describe 'US2/coupons' do
+    it 'displays a link to create a new coupon for a merchant' do
+      # When I visit my coupon index page
+      # I see a link to create a new coupon.
+      expect(page).to have_link("Create new coupon", href: new_merchant_coupon_path(@merchant1))
+      # When I click that link 
+      click_link("Create new coupon")
+      # I am taken to a new page where I see a form to add a new coupon.
+      expect(current_path).to eq(new_merchant_coupon_path(@merchant1))
+      # When I fill in that form with a name, unique code, an amount, and whether that amount is a percent or a dollar amount
+      within '.new_coupon' do
+        fill_in 'name', with: 'Price is right'
+        fill_in 'code', with: '1 dolla Bob'
+        fill_in 'discount amount', with: 1
+        fill_in 'percent off?', with: false
+        # And click the Submit button
+        click_button 'submit'
+      end
+      # I'm taken back to the coupon index page
+      expect(current_path).to eq(merchant_coupons_path(@merchant1))
+      # And I can see my new coupon listed.
+      within '.coupons' do
+        expect(page).to have_content('Coupon name: 1 dolla Bob')
+      end
 
-
-* Sad Paths to consider: 
-1. This Merchant already has 5 active coupons
-2. Coupon code entered is NOT unique
+    it 'can only create coupons with a unique coupon code for that merchant' do
+      click_link("Create new coupon")
+      expect(current_path).to eq(new_merchant_coupon_path(@merchant1))
+      within '.new_coupon' do
+        fill_in 'name', with: '1 off'
+        fill_in 'code', with: '1 dolla Bob'
+        fill_in 'discount amount', with: 1
+        fill_in 'percent off?', with: false
+        # And click the Submit button
+        click_button 'submit'
+      end
+      expect(current_path).to eq(new_merchant_coupon_path(@merchant1))
+      expect(page).to have_content("Code already exists. Please assign a different code.")
+    end
+      # * Sad Paths to consider: 
+      # 1. This Merchant already has 5 active coupons
+      # 2. Coupon code entered is NOT unique
+  end
 end

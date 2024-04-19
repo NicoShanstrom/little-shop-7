@@ -61,10 +61,29 @@ RSpec.describe Merchant, type: :model do
     it { should validate_presence_of(:name) }
   end
 
+  describe "enums" do
+    it { should define_enum_for(:status).with_values({ disabled: 0, enabled: 1 }) }
+  end
+
   describe '#instance methods' do
-  
-    it "#most_popular_items" do
-      expect(@merchant1.most_popular_items).to match_array([@mat, @table, @mug, @plant, @ember])
+    describe "#active_coupon_limit" do
+      it 'validates active_coupon_limit' do
+        coupon1 = @merchant1.coupons.create!(name: "5 off", code: "I got five on it", discount_amount: 5, percent_off: false, status: 0)
+        coupon2 = @merchant1.coupons.create!(name: "1 off", code: "I got one on it", discount_amount: 1, percent_off: false, status: 0)
+        coupon3 = @merchant1.coupons.create!(name: "2 off", code: "I got two on it", discount_amount: 2, percent_off: false, status: 0)
+        coupon4 = @merchant1.coupons.create!(name: "3 off", code: "I got three on it", discount_amount: 3, percent_off: false, status: 0)
+        coupon5 = @merchant1.coupons.create!(name: "4 off", code: "I got four on it", discount_amount: 4, percent_off: false, status: 0)
+
+        coupon6 = @merchant1.coupons.new(name: "6 off", code: "I got 6 on it", discount_amount: 6, percent_off: false, status: 0)
+        coupon6.save
+        expect(coupon6.errors[:base]).to include("Merchant can't have more than 5 active coupons")
+      end
+    end
+
+    describe "#most_popular_items" do
+      it "displays the most popular items for a specific merchant" do
+        expect(@merchant1.most_popular_items).to match_array([@mat, @table, @mug, @plant, @ember])
+      end
     end
 
     describe "#top_five_customers" do
@@ -115,10 +134,6 @@ RSpec.describe Merchant, type: :model do
         expect(merchant2.unique_invoices).to_not include(invoice3)
       end
     end
-  end
-
-  describe "enums" do
-    it { should define_enum_for(:status).with_values({ disabled: 0, enabled: 1 }) }
   end
 
   describe '::class methods' do

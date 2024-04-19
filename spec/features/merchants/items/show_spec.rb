@@ -35,7 +35,6 @@ RSpec.describe "Merchant Show Spec" do
       # Then I am taken to a page to edit this item
       expect(current_path).to eq(edit_merchant_item_path(@merchant1, @mat))
       # And I see a form filled in with the existing item attribute information
-
       expect(page).to have_field('name', with: @mat.name)
       expect(page).to have_field('description', with: @mat.description)
       expect(page).to have_field('unit_price', with: @mat.unit_price)
