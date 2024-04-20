@@ -4,12 +4,13 @@ RSpec.describe 'merchant dashboard show page', type: :feature do
   before(:each) do
     @merchant1 = create(:merchant)
     # @merchant2 = create(:merchant)
-    @coupon1 = @merchant1.coupons.create!(name: "5 off", code: "I got five on it", discount_amount: 5, percent_off: false, status: 0)
-    @coupon2 = @merchant1.coupons.create!(name: "10 off", code: "Its a ten", discount_amount: 10, status: 0)
-    @coupon3 = @merchant1.coupons.create!(name: "7 off", code: "Lucky 7", discount_amount: 7, percent_off: false, status: 0)
-    @coupon4 = @merchant1.coupons.create!(name: "15 off", code: "Buy more", discount_amount: 15, status: 0)
-    @coupon5 = @merchant1.coupons.create!(name: "11 off", code: "Make a wish", discount_amount: 11, percent_off: false, status: 0)
-    @coupon6 = @merchant1.coupons.create!(name: "40 off", code: "40 off of freedom", discount_amount: 40, status: 1)
+    @coupon1 = @merchant1.coupons.create!(name: "5 off", code: "I got five on it", discount_amount: 5, percent_off: false)
+    @coupon2 = @merchant1.coupons.create!(name: "10 off", code: "Its a ten", discount_amount: 10)
+    @coupon3 = @merchant1.coupons.create!(name: "7 off", code: "Lucky 7", discount_amount: 7, percent_off: false)
+    @coupon4 = @merchant1.coupons.create!(name: "15 off", code: "Buy more", discount_amount: 15)
+    @coupon5 = @merchant1.coupons.create!(name: "11 off", code: "Make a wish", discount_amount: 11, percent_off: false)
+    @coupon6 = @merchant1.coupons.create!(name: "40 off", code: "40 off of freedom", discount_amount: 40, status: "inactive")
+    # require 'pry'; binding.pry
 
     @table = create(:item, name: "table", merchant: @merchant1)
     @pen = create(:item, name: "pen", merchant: @merchant1)

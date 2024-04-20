@@ -10,19 +10,8 @@ class Merchant < ApplicationRecord
   has_many :invoices_w_coupons, through: :coupons, source: :invoices #distinguish which relationship path it is taking as to not interfere with the previous relationship
 
   validates :name, presence: true
-  validate :active_coupon_limit, on: :create
 
-  def active_coupon_limit
-    if coupons.active.count >= 5 #exits the method if these conditions are not met
-                                            #if the coupon is created within the 5 or less rule for a merchant
-                                            #then this method does not run
-
-      errors.add(:base, "Merchant can't have more than 5 active coupons")
-      #adding this :base (base error collection of an object being validated) message will be able to 
-      # add to the error messages on the create action on the controller
-    # if the coupon is not created because this conditional, otherwise the user may not know why it is failing.
-    end
-  end
+  
 
   def top_five_customers
     customers.joins(:transactions).where("result = 1").select("customers.*, COUNT(DISTINCT transactions.id) AS transaction_count").order("transaction_count DESC").group(:id).limit(5)
