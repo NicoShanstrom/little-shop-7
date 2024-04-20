@@ -17,4 +17,8 @@ class Coupon < ApplicationRecord
       errors.add(:base, "Merchant can't have more than 5 active coupons")
     end
   end
+
+  def coupon_count
+    self.invoices.joins(:transactions).where("transactions.result = 1").distinct.count
+  end
 end

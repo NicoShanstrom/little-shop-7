@@ -4,8 +4,24 @@ RSpec.describe Coupon, type: :model do
   before :each do
     @merchant1 = Merchant.create!(name: "The best merchant")
     @five_off = @merchant1.coupons.create!(name: "5 off", code: "I got five off it", discount_amount: 5, percent_off: false, status: 1)
-   
+    
+    @table = create(:item, name: "table", merchant: @merchant1)
+    @pen = create(:item, name: "pen", merchant: @merchant1)
+    
+    @customer1 = create(:customer)
+    @customer2 = create(:customer)
+    
+    @invoice_customer1 = create(:invoice, customer: @customer1, status: 1, coupon_id: @five_off.id)
+    @invoice_customer2 = create(:invoice, customer: @customer2, status: 1, coupon_id: @five_off.id)
+    
+    @invoice_items1 = create(:invoice_item, invoice: @invoice_customer1, item: @table, status: 0 )
+    @invoice_items2 = create(:invoice_item, invoice: @invoice_customer2, item: @pen, status: 0 )
+
+    @transactions_invoice1 = create_list(:transaction, 5, invoice: @invoice_customer1, result: 1)
+    @transactions_invoice2 = create_list(:transaction, 4, invoice: @invoice_customer2, result: 1)
+    # require 'pry'; binding.pry
   end
+
   describe 'relationships' do
     it { should belong_to :merchant }
     it { should have_many :invoices }
@@ -38,6 +54,12 @@ RSpec.describe Coupon, type: :model do
         
         expect(coupon6.errors[:base]).to include("Merchant can't have more than 5 active coupons")
         # require 'pry'; binding.pry
+      end
+    end
+
+    describe "#coupon_count" do
+      it "displays the count of a coupon used on invoices with successful transactions" do
+        expect(@five_off.coupon_count).to eq(2)
       end
     end
   end

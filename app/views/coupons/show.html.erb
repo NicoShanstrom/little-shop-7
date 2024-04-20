@@ -1,0 +1,6 @@
+<h1><%= "#{@merchant.name}'s #{@coupon.name} coupon!" %></h1>
+
+<h3>Discount amount: <%=@coupon.discount_amount %></h3>
+<h3>Percent off?: <%=@coupon.percent_off %></h3>
+<h3>Coupon status: <%=@coupon.status %></h3>
+<h3><%="How many times has #{@coupon.name} been used?"%> <%= @coupon.coupon_count %></h3>
