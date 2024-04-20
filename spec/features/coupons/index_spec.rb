@@ -60,53 +60,53 @@ RSpec.describe 'merchant dashboard show page', type: :feature do
       # I am taken to a new page where I see a form to add a new coupon.
       expect(current_path).to eq(new_merchant_coupon_path(@merchant1))
       # When I fill in that form with a name, unique code, an amount, and whether that amount is a percent or a dollar amount
-      within '.new_coupon' do
-        fill_in 'name', with: 'Price is right'
-        fill_in 'code', with: '1 dolla Bob'
-        fill_in 'discount amount', with: 1
-        fill_in 'percent off?', with: false
-        # And click the Submit button
-        click_button 'submit'
-      end
+      fill_in 'Name', with: 'Price is right'
+      fill_in 'Code', with: '1 dolla Bob'
+      fill_in 'Discount amount', with: 1
+      fill_in 'Percent off?', with: false
+      fill_in 'Status', with: 'inactive'
+      # And click the Submit button
+      click_button 'submit'
       # I'm taken back to the coupon index page
       expect(current_path).to eq(merchant_coupons_path(@merchant1))
       # And I can see my new coupon listed.
       within '.coupons' do
-        expect(page).to have_content('Coupon name: 1 dolla Bob')
+        expect(page).to have_content('Coupon name: Price is right')
       end
     end
-    
+
     it 'can only create coupons with a unique coupon code for that merchant' do
       # 2. Coupon code entered is NOT unique
       click_link("Create new coupon")
       expect(current_path).to eq(new_merchant_coupon_path(@merchant1))
-      within '.new_coupon' do
-        fill_in 'name', with: '1 off'
-        fill_in 'code', with: '1 dolla Bob'
-        fill_in 'discount amount', with: 1
-        fill_in 'percent off?', with: false
-        # And click the Submit button
-        click_button 'submit'
-      end
-      expect(current_path).to eq(new_merchant_coupon_path(@merchant1))
+      bobcoupon = @merchant1.coupons.create!(name: 'Bobby B', code: '1 dolla Bob', discount_amount: 1, percent_off: false, status: 'inactive')
+      fill_in 'Name', with: 'Bob Barker'
+      fill_in 'Code', with: '1 dolla Bob'
+      fill_in 'Discount amount', with: 1
+      fill_in 'Percent off?', with: false
+      fill_in 'Status', with: 'inactive'
+      # And click the Submit button
+      click_button 'submit'
+      # expect(current_path).to eq(new_merchant_coupon_path(@merchant1))
+      # require 'pry'; binding.pry
       expect(page).to have_content("Code already exists. Please assign a different code.")
+      expect(page).to have_content("Create a new coupon for #{@merchant1.name}!")
     end
     
     it 'only allows a merchant to have a max of 5 active coupons at one time' do
       # 1. This Merchant already has 5 active coupons
       click_link("Create new coupon")
       expect(current_path).to eq(new_merchant_coupon_path(@merchant1))
-      within '.new_coupon' do
-        fill_in 'name', with: 'IYKYK'
-        fill_in 'code', with: 'Surprise'
-        fill_in 'discount amount', with: 9
-        fill_in 'percent off?', with: false
-        fill_in 'status', with: "active"
-        # And click the Submit button
-        click_button 'submit'
-      end
-      expect(current_path).to eq(new_merchant_coupon_path(@merchant1))
+      fill_in 'Name', with: 'IYKYK'
+      fill_in 'Code', with: 'Surprise'
+      fill_in 'Discount amount', with: 9
+      fill_in 'Percent off?', with: false
+      fill_in 'Status', with: "active"
+      # And click the Submit button
+      click_button 'submit'
+      # expect(current_path).to eq(new_merchant_coupon_path(@merchant1))
       expect(page).to have_content("Merchant can't have more than 5 active coupons")
+      expect(page).to have_content("Create a new coupon for #{@merchant1.name}!")
     end
   end
 end

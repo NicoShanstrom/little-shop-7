@@ -1,0 +1,20 @@
+<h1>Create a new coupon for <%= @merchant.name %>!</h1>
+
+<%= form_with url: merchant_coupons_path(@merchant), method: :post, data: {turbo: false} do |f| %>
+  <li><%= f.label :name, 'Name' %>
+  <%= f.text_field :name %></li>
+
+  <li><%= f.label :code, 'Code' %>
+  <%= f.text_field :code%></li>
+
+  <li><%= f.label :discount_amount, 'Discount amount' %>
+  <%= f.text_field :discount_amount %></li>
+  
+  <li><%= f.label :percent_off, 'Percent off?' %>
+  <%= f.text_field :percent_off %></li>
+
+  <li><%= f.label :status, 'Status' %>
+  <%= f.text_field :status %></li>
+  
+  <%= f.submit 'submit' %>
+<% end %>
