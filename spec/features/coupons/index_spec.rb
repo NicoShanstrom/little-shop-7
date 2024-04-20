@@ -74,8 +74,10 @@ RSpec.describe 'merchant dashboard show page', type: :feature do
       within '.coupons' do
         expect(page).to have_content('Coupon name: 1 dolla Bob')
       end
-
+    end
+    
     it 'can only create coupons with a unique coupon code for that merchant' do
+      # 2. Coupon code entered is NOT unique
       click_link("Create new coupon")
       expect(current_path).to eq(new_merchant_coupon_path(@merchant1))
       within '.new_coupon' do
@@ -89,8 +91,22 @@ RSpec.describe 'merchant dashboard show page', type: :feature do
       expect(current_path).to eq(new_merchant_coupon_path(@merchant1))
       expect(page).to have_content("Code already exists. Please assign a different code.")
     end
-      # * Sad Paths to consider: 
+    
+    it 'only allows a merchant to have a max of 5 active coupons at one time' do
       # 1. This Merchant already has 5 active coupons
-      # 2. Coupon code entered is NOT unique
+      click_link("Create new coupon")
+      expect(current_path).to eq(new_merchant_coupon_path(@merchant1))
+      within '.new_coupon' do
+        fill_in 'name', with: 'IYKYK'
+        fill_in 'code', with: 'Surprise'
+        fill_in 'discount amount', with: 9
+        fill_in 'percent off?', with: false
+        fill_in 'status', with: "active"
+        # And click the Submit button
+        click_button 'submit'
+      end
+      expect(current_path).to eq(new_merchant_coupon_path(@merchant1))
+      expect(page).to have_content("Merchant can't have more than 5 active coupons")
+    end
   end
 end
