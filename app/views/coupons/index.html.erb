@@ -1,5 +1,6 @@
 <h1><%=@merchant.name%> Coupons!</h1>
 
+<h3>Active Coupons</h3>
 <div class="active_coupons">
   <ul>
     <% @merchant_coupons.active.each do |active_coupon| %>
@@ -14,6 +15,7 @@
   </ul>
 </div>
 
+<h3>Inactive Coupons</h3>
 <div class="inactive_coupons">
   <ul>
     <% @merchant_coupons.inactive.each do |inactive_coupon| %>
