@@ -77,11 +77,42 @@ RSpec.describe Invoice, type: :model do
   end
 
   describe "instance method" do
-    it "#formatted_date" do
-      @customer = Customer.create!(first_name: "Blake", last_name: "Sergesketter")
-      @invoice = Invoice.create!(status: 1, customer_id: @customer.id, created_at: "Sat, 13 Apr 2024 23:10:10.717784000 UTC +00:00")
-      expect(@invoice.formatted_date).to eq("Saturday, April 13, 2024")
-      #Saturday, April 13, 2024
+
+    describe '#coupon_discount_amount' do
+      it 'adjusts the discount_amount to a decimal if a coupon has a percent_off value of true, returns 0 if no coupon' do
+        merchant0 = create(:merchant, status: 'enabled')
+        coupon1 = merchant0.coupons.create!(name: "10 off", code: "10 off", discount_amount: 10, percent_off: true, status: 0)
+        table = create(:item, name: "table", merchant: merchant0, status: 'enabled', unit_price: 10)
+        customer1 = create(:customer)
+        invoice_1 = create(:invoice, customer: customer1, status: 1, coupon_id: coupon1.id)
+        invoice_item1 = create(:invoice_item, quantity: 1, unit_price: 10, invoice: invoice_1, item: table, status: 0 )
+        transactions_invoice1 = create(:transaction, invoice: invoice_1, result: 1)
+        # require 'pry'; binding.pry
+        expect(invoice_1.coupon_discount_amount).to eq(0.1)
+      end
+    end
+
+    describe '#grand_total' do
+      it 'calculates the grand total of an invoice using the coupons discount amount' do
+        merchant0 = create(:merchant, status: 'enabled')
+        coupon1 = merchant0.coupons.create!(name: "10 off", code: "10 off", discount_amount: 10, percent_off: true, status: 0)
+        table = create(:item, name: "table", merchant: merchant0, status: 'enabled', unit_price: 10)
+        customer1 = create(:customer)
+        invoice_1 = create(:invoice, customer: customer1, status: 1, coupon_id: coupon1.id)
+        invoice_item1 = create(:invoice_item, quantity: 1, unit_price: 10, invoice: invoice_1, item: table, status: 0 )
+        transactions_invoice1 = create(:transaction, invoice: invoice_1, result: 1)
+        # require 'pry'; binding.pry
+        expect(invoice_1.grand_total).to eq(9.9)
+      end
+    end
+
+    describe 'formatted date' do
+      it "#formatted_date" do
+        @customer = Customer.create!(first_name: "Blake", last_name: "Sergesketter")
+        @invoice = Invoice.create!(status: 1, customer_id: @customer.id, created_at: "Sat, 13 Apr 2024 23:10:10.717784000 UTC +00:00")
+        expect(@invoice.formatted_date).to eq("Saturday, April 13, 2024")
+        #Saturday, April 13, 2024
+      end
     end
 
     it 'customer_name' do

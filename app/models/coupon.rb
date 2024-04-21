@@ -21,4 +21,12 @@ class Coupon < ApplicationRecord
   def coupon_count
     self.invoices.joins(:transactions).where("transactions.result = 1").distinct.count
   end
+
+  def percent_or_integer_off
+    if percent_off?
+      discount_amount / 100.0
+    else
+      discount_amount
+    end
+  end
 end

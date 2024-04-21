@@ -62,6 +62,17 @@ RSpec.describe Coupon, type: :model do
         expect(@five_off.coupon_count).to eq(2)
       end
     end
+
+    describe '#percent_or_integer_off' do
+      it 'adjusts the coupon discount amount to a decimal if percent off is true' do
+        merchant0 = create(:merchant, status: 'enabled')
+        coupon1 = merchant0.coupons.create!(name: "10 off", code: "10 off", discount_amount: 10, percent_off: true, status: 0)
+        coupon2 = merchant0.coupons.create!(name: "1 off", code: "1 off", discount_amount: 1, percent_off: false, status: 0)
+        # require 'pry'; binding.pry
+        expect(coupon1.percent_or_integer_off).to eq(0.1)
+        expect(coupon2.percent_or_integer_off).to eq(1)
+      end
+    end
   end
 
 end

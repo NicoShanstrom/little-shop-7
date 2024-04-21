@@ -4,7 +4,7 @@
 <h3>Percent off?: <%=@coupon.percent_off %></h3>
 <h3>Coupon status: <%=@coupon.status %></h3>
 <h3><%="How many times has #{@coupon.name} been used?"%> <%= @coupon.coupon_count %></h3>
-<% if @coupon.active? %>%
+<% if @coupon.active? %>
   <%= button_to "deactivate #{@coupon.name}", merchant_coupon_path(@merchant, @coupon), params: { new_status: 'inactive' }, method: :patch, data: { turbo: false } %>
 <% else %>
   <%= button_to "activate #{@coupon.name}", merchant_coupon_path(@merchant, @coupon), params: { new_status: 'active' }, method: :patch, data: { turbo: false } %>
