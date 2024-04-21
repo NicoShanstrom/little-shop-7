@@ -72,6 +72,7 @@ RSpec.describe 'merchant coupon show page', type: :feature do
       # As a merchant 
       # When I visit one of my active coupon's show pages
       # I see a button to deactivate that coupon
+      # require 'pry'; binding.pry
       expect(page).to have_button("deactivate #{@coupon1.name}")
       # When I click that button
       click_button "deactivate #{@coupon1.name}"
