@@ -116,4 +116,25 @@ RSpec.describe 'Merchant Invoices Show' do
       end
     end
   end
+
+  describe 'US7/coupons' do
+    it 'displays the subtotal and grand total revenues' do
+      merchant0 = create(:merchant, status: 'enabled')
+      coupon1 = merchant0.coupons.create!(name: "5 off", code: "I got five on it", discount_amount: 5, percent_off: false, status: 0)
+      table = create(:item, name: "table", merchant: merchant0, status: 'enabled', unit_price: 10)
+      customer1 = create(:customer)
+      invoice_1 = create(:invoice, customer: customer1, status: 1, coupon_id: coupon1.id)
+      invoice_item1 = create(:invoice_item, quantity: 1, unit_price: 10, invoice: invoice_1, item: table, status: 0 )
+      transactions_invoice1 = create(:transaction, invoice: invoice_1, result: 1)
+      # require 'pry'; binding.pry
+      # When I visit one of my merchant invoice show pages
+      visit merchant_invoice_path(merchant0, invoice_1)
+      # I see the subtotal for my merchant from this invoice (that is, the total that does not include coupon discounts)
+      expect(page).to have_content("Invoice subtotal: #{invoice_1.total_revenue}")
+      # And I see the grand total revenue after the discount was applied
+      expect(page).to have_content("Invoice grand total: #{invoice_1.grand_total}")
+      # And I see the name and code of the coupon used as a link to that coupon's show page.
+      expect(page).to have_content("Coupon used: #{invoice_1.coupon.name} - #{invoice_1.coupon.id}")
+    end
+  end
 end

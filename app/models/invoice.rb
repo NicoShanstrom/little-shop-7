@@ -31,4 +31,18 @@ class Invoice < ApplicationRecord
     items.where(merchant: merchant)
     .sum("invoice_items.unit_price * invoice_items.quantity")
   end
+
+  def grand_total
+    total_revenue - percent_or_integer_off
+  end
+
+  def percent_or_integer_off
+    if coupon.nil?
+      0
+    elsif coupon.percent_off?
+      coupon.discount_amount/100
+    else
+      coupon.discount_amount
+    end
+  end
 end
