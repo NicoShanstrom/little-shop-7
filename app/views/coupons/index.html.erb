@@ -1,13 +1,27 @@
 <h1><%=@merchant.name%> Coupons!</h1>
 
-<div class="coupons">
+<div class="active_coupons">
   <ul>
-    <% @merchant_coupons.each do |merchant_coupon| %>
-      <div class="coupon-<%=merchant_coupon.id%>">
+    <% @merchant_coupons.active.each do |active_coupon| %>
+      <div class="active_coupon-<%=active_coupon.id%>">
         <li>
-          <h3>Coupon name: <%= link_to merchant_coupon.name,  merchant_coupon_path(@merchant, merchant_coupon) %></h3>
-          <h3>Discount amount: <%= merchant_coupon.discount_amount %></h3>
-          <h3>Percent discount?: <%= merchant_coupon.percent_off %></h3>
+          <h3>Coupon name: <%= link_to active_coupon.name,  merchant_coupon_path(@merchant, active_coupon) %></h3>
+          <h3>Discount amount: <%= active_coupon.discount_amount %></h3>
+          <h3>Percent discount?: <%= active_coupon.percent_off %></h3>
+        </li>
+      </div>
+    <%end%>
+  </ul>
+</div>
+
+<div class="inactive_coupons">
+  <ul>
+    <% @merchant_coupons.inactive.each do |inactive_coupon| %>
+      <div class="inactive_coupon-<%=inactive_coupon.id%>">
+        <li>
+          <h3>Coupon name: <%= link_to inactive_coupon.name,  merchant_coupon_path(@merchant, inactive_coupon) %></h3>
+          <h3>Discount amount: <%= inactive_coupon.discount_amount %></h3>
+          <h3>Percent discount?: <%= inactive_coupon.percent_off %></h3>
         </li>
       </div>
     <%end%>

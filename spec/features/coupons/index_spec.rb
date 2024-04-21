@@ -46,7 +46,6 @@ RSpec.describe 'merchant dashboard show page', type: :feature do
     @transactions_invoice4 = create_list(:transaction, 7, invoice: @invoice_customer4, result: 1)
     @transactions_invoice5 = create_list(:transaction, 3, invoice: @invoice_customer5, result: 1)
     @transactions_invoice6 = create_list(:transaction, 9, invoice: @invoice_customer6, result: 1)
-    require 'pry'; binding.pry
     # require 'pry'; binding.pry
     visit merchant_coupons_path(@merchant1)
   end
@@ -71,7 +70,7 @@ RSpec.describe 'merchant dashboard show page', type: :feature do
       # I'm taken back to the coupon index page
       expect(current_path).to eq(merchant_coupons_path(@merchant1))
       # And I can see my new coupon listed.
-      within '.coupons' do
+      within '.inactive_coupons' do
         expect(page).to have_content('Coupon name: Price is right')
       end
     end
@@ -116,6 +115,17 @@ RSpec.describe 'merchant dashboard show page', type: :feature do
       # As a merchant
       # When I visit my coupon index page
       # I can see that my coupons are separated between active and inactive coupons. 
+      within '.active_coupons' do
+        expect(page).to have_content(@coupon1.name)
+        expect(page).to have_content(@coupon2.name)
+        expect(page).to have_content(@coupon3.name)
+        expect(page).to have_content(@coupon4.name)
+        expect(page).to have_content(@coupon4.name)
+      end
+
+      within '.inactive_coupons' do
+        expect(page).to have_content(@coupon6.name)
+      end
     end
   end
 end

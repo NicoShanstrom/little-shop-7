@@ -110,7 +110,5 @@ RSpec.describe 'merchant coupon show page', type: :feature do
       # And I can see that its status is now listed as 'inactive'.
       expect(page).to have_content("Coupon status: active")
     end
-      # * Sad Paths to consider: 
-      # 1. A coupon cannot be deactivated if there are any pending invoices with that coupon.
   end
 end
