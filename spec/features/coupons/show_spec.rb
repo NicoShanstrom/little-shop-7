@@ -84,4 +84,25 @@ RSpec.describe 'merchant coupon show page', type: :feature do
       # * Sad Paths to consider: 
       # 1. A coupon cannot be deactivated if there are any pending invoices with that coupon.
   end
+
+  describe "US5/coupons" do
+    it 'displays a button to activate a coupon' do
+      # As a merchant 
+      # When I visit one of my inactive coupon's show pages
+      # I see a button to activate that coupon
+      # require 'pry'; binding.pry
+      merchant = Merchant.create!(name: "Good")
+      coupon7 = merchant.coupons.create!(name: "9 off", code: "9 off", discount_amount: 9, status: 1)
+      visit merchant_coupon_path(merchant, coupon7)
+      expect(page).to have_button("activate #{coupon7.name}")
+      # When I click that button
+      click_button "activate #{coupon7.name}"
+      # I'm taken back to the coupon show page 
+      expect(current_path).to eq(merchant_coupon_path(merchant, coupon7))
+      # And I can see that its status is now listed as 'inactive'.
+      expect(page).to have_content("Coupon status: active")
+    end
+      # * Sad Paths to consider: 
+      # 1. A coupon cannot be deactivated if there are any pending invoices with that coupon.
+  end
 end
