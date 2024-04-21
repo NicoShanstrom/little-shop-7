@@ -109,4 +109,12 @@ RSpec.describe 'merchant dashboard show page', type: :feature do
       expect(page).to have_content("Create a new coupon for #{@merchant1.name}!")
     end
   end
+
+  describe "US6/coupons" do
+    it 'Groups coupons by active and inactive' do
+      # As a merchant
+      # When I visit my coupon index page
+      # I can see that my coupons are separated between active and inactive coupons. 
+    end
+  end
 end
