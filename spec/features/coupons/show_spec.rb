@@ -30,7 +30,7 @@ RSpec.describe 'merchant coupon show page', type: :feature do
     @invoice_customer2 = create(:invoice, customer: @customer2, status: 1, coupon_id: @coupon1.id)
     @invoice_customer3 = create(:invoice, customer: @customer3, status: 1, coupon_id: @coupon3.id)
     @invoice_customer4 = create(:invoice, customer: @customer4, status: 1, coupon_id: @coupon4.id)
-    @invoice_customer5 = create(:invoice, customer: @customer5, status: 1, coupon_id: @coupon5.id)
+    @invoice_customer5 = create(:invoice, customer: @customer5, status: 0, coupon_id: @coupon5.id)
     @invoice_customer6 = create(:invoice, customer: @customer6, status: 1)
 
     @invoice_items1 = create(:invoice_item, invoice: @invoice_customer1, item: @table, status: 0 ) #pending
@@ -81,8 +81,16 @@ RSpec.describe 'merchant coupon show page', type: :feature do
       # And I can see that its status is now listed as 'inactive'.
       expect(page).to have_content("Coupon status: inactive")
     end
+    it 'cannot deactivate a coupon that is associated with any in progress invoices' do
       # * Sad Paths to consider: 
       # 1. A coupon cannot be deactivated if there are any pending invoices with that coupon.
+      visit merchant_coupon_path(@merchant1, @coupon5)
+      expect(page).to have_button("deactivate #{@coupon5.name}")
+      click_button "deactivate #{@coupon5.name}"
+      expect(current_path).to eq(merchant_coupon_path(@merchant1, @coupon5))
+      expect(page).to have_content("Can't deactivate coupon with pending invoices")
+      expect(page).to have_content("Coupon status: active")
+    end
   end
 
   describe "US5/coupons" do

@@ -46,6 +46,7 @@ RSpec.describe 'merchant dashboard show page', type: :feature do
     @transactions_invoice4 = create_list(:transaction, 7, invoice: @invoice_customer4, result: 1)
     @transactions_invoice5 = create_list(:transaction, 3, invoice: @invoice_customer5, result: 1)
     @transactions_invoice6 = create_list(:transaction, 9, invoice: @invoice_customer6, result: 1)
+    require 'pry'; binding.pry
     # require 'pry'; binding.pry
     visit merchant_coupons_path(@merchant1)
   end
