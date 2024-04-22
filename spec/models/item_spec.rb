@@ -4,14 +4,14 @@ RSpec.describe Item, type: :model do
   before :each do
     @merchant1 = Merchant.create!(name: "merchant", status: 0)
 
-      @table = create(:item, name: "table", merchant: @merchant1, unit_price: 4000, status: 0)
-      @pen = create(:item, name: "pen", merchant: @merchant1, unit_price: 100, status: 1)
-      @mat = create(:item, name: "yoga mat", merchant: @merchant1, unit_price: 5000, status: 0)
-      @mug = create(:item, name: "mug", merchant: @merchant1, unit_price: 200, status: 1)
-      @ember = create(:item, name: "ember", merchant: @merchant1, unit_price: 600, status: 1)
-      @plant = create(:item, name: "plant", merchant: @merchant1, unit_price: 400, status: 1)
+    @table = create(:item, name: "table", merchant: @merchant1, unit_price: 4000, status: 0)
+    @pen = create(:item, name: "pen", merchant: @merchant1, unit_price: 100, status: 1)
+    @mat = create(:item, name: "yoga mat", merchant: @merchant1, unit_price: 5000, status: 0)
+    @mug = create(:item, name: "mug", merchant: @merchant1, unit_price: 200, status: 1)
+    @ember = create(:item, name: "ember", merchant: @merchant1, unit_price: 600, status: 1)
+    @plant = create(:item, name: "plant", merchant: @merchant1, unit_price: 400, status: 1)
 
-      @items = [@table, @pen, @mat, @mug, @ember, @plant]
+    @items = [@table, @pen, @mat, @mug, @ember, @plant]
 
     @customer1 = create(:customer)
     @customer2 = create(:customer)

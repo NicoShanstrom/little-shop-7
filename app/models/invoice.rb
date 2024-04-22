@@ -43,14 +43,4 @@ class Invoice < ApplicationRecord
       coupon.percent_or_integer_off
     end
   end
-
-  # def percent_or_integer_off
-  #   if coupon.nil?
-  #     0
-  #   elsif coupon.percent_off?
-  #     coupon.discount_amount/100
-  #   else
-  #     coupon.discount_amount
-  #   end
-  # end
 end
