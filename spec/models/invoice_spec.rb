@@ -88,7 +88,7 @@ RSpec.describe Invoice, type: :model do
         invoice_item1 = create(:invoice_item, quantity: 1, unit_price: 10, invoice: invoice_1, item: table, status: 0 )
         transactions_invoice1 = create(:transaction, invoice: invoice_1, result: 1)
         # require 'pry'; binding.pry
-        expect(invoice_1.coupon_discount_amount).to eq(0.1)
+        expect(invoice_1.coupon_discount_amount).to eq(1.0)
       end
     end
 
@@ -102,7 +102,7 @@ RSpec.describe Invoice, type: :model do
         invoice_item1 = create(:invoice_item, quantity: 1, unit_price: 10, invoice: invoice_1, item: table, status: 0 )
         transactions_invoice1 = create(:transaction, invoice: invoice_1, result: 1)
         # require 'pry'; binding.pry
-        expect(invoice_1.grand_total).to eq(9.9)
+        expect(invoice_1.grand_total).to eq(9.0)
       end
     end
 
