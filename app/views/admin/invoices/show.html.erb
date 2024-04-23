@@ -16,8 +16,14 @@
       <% end %>
 
       <p>Created on: <%= @invoice.formatted_date %></p>
-      <p>Total Revenue: <%= number_to_currency(@invoice.total_revenue / 100.0) %></p>
       <p>Customer: <%= @invoice.customer_name %></p>
+      <p>Total Revenue: <%= number_to_currency(@invoice.total_revenue / 100.0) %></p>
+      <p>Grand Total: <%= number_to_currency(@invoice.grand_total / 100.0) %></p>
+      <% if @invoice.coupon.present? %>
+        <p>Coupon used on invoice name: <%= @invoice.coupon.name %></p>
+        <p>Coupon used on invoice code: <%= @invoice.coupon.code %></p>
+      <%end%>
+
     </div>
     <div class="col">
     </div>

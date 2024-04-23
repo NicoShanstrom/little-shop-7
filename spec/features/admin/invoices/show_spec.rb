@@ -99,4 +99,38 @@ RSpec.describe "the admin invoices show page" do
       expect(page).to have_field(:status, with: 'completed')
     end
   end
+
+  describe 'US8/coupons' do
+    it 'displays the coupon name and code (if one was used), subtotal(before coupon) and grand total(after coupon) for an invoice' do
+      merchant0 = create(:merchant, status: 'enabled')
+      merchant01 = create(:merchant, status: 'enabled')
+
+      coupon1 = merchant0.coupons.create!(name: "10 off", code: "10 off", discount_amount: 50, percent_off: false, status: 0)
+
+      table = create(:item, name: "table", merchant: merchant0, status: 'enabled', unit_price: 100)
+      car = create(:item, name: "car", merchant: merchant01, status: 'enabled', unit_price: 1000)
+      
+      customer1 = create(:customer)
+      
+      invoice1 = create(:invoice, customer: customer1, status: 1, coupon_id: coupon1.id)
+      invoice1_item1 = create(:invoice_item, quantity: 1, unit_price: 100, invoice: invoice1, item: table, status: 0 )
+      invoice1_item2 = create(:invoice_item, quantity: 1, unit_price: 1000, invoice: invoice1, item: car, status: 0 )
+      
+      transactions_invoice1 = create(:transaction, invoice: invoice1, result: 1)
+      # When I visit one of my admin invoice show pages
+      visit admin_invoice_path(invoice1)
+      # I see the name and code of the coupon that was used (if there was a coupon applied)
+      expect(page).to have_content("Coupon used on invoice name: #{coupon1.name}")
+      expect(page).to have_content("Coupon used on invoice code: #{coupon1.code}")
+      # And I see both the subtotal revenue from that invoice (before coupon) and the grand total revenue (after coupon) for this invoice.
+      expect(page).to have_content("Total Revenue: $11.00")
+      # expect(page).to have_content("Invoice subtotal(before coupon): $11")
+      # save_and_open_page
+      # require 'pry'; binding.pry
+      expect(page).to have_content("Grand Total: $10.50")
+    end
+    # * Alternate Paths to consider: 
+    # 1. There may be invoices with items from more than 1 merchant. Coupons for a merchant only apply to items from that merchant.
+    # 2. When a coupon with a dollar-off value is used with an invoice with multiple merchants' items, the dollar-off amount applies to the total amount even though there may be items present from another merchant.
+  end
 end
