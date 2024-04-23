@@ -7,9 +7,9 @@ RSpec.describe 'merchant dashboard show page', type: :feature do
     @coupon1 = @merchant1.coupons.create!(name: "5 off", code: "I got five on it", discount_amount: 5, percent_off: false)
     @coupon2 = @merchant1.coupons.create!(name: "10 off", code: "Its a ten", discount_amount: 10)
     @coupon3 = @merchant1.coupons.create!(name: "7 off", code: "Lucky 7", discount_amount: 7, percent_off: false)
-    @coupon4 = @merchant1.coupons.create!(name: "15 off", code: "Buy more", discount_amount: 15)
-    @coupon5 = @merchant1.coupons.create!(name: "11 off", code: "Make a wish", discount_amount: 11, percent_off: false)
-    @coupon6 = @merchant1.coupons.create!(name: "40 off", code: "40 off of freedom", discount_amount: 40, status: "inactive")
+    # @coupon4 = @merchant1.coupons.create!(name: "15 off", code: "Buy more", discount_amount: 15)
+    # @coupon5 = @merchant1.coupons.create!(name: "11 off", code: "Make a wish", discount_amount: 11, percent_off: false)
+    # @coupon6 = @merchant1.coupons.create!(name: "40 off", code: "40 off of freedom", discount_amount: 40, status: "inactive")
     # require 'pry'; binding.pry
 
     @table = create(:item, name: "table", merchant: @merchant1)
@@ -30,8 +30,8 @@ RSpec.describe 'merchant dashboard show page', type: :feature do
     @invoice_customer1 = create(:invoice, customer: @customer1, status: 1, coupon_id: @coupon1.id)
     @invoice_customer2 = create(:invoice, customer: @customer2, status: 1, coupon_id: @coupon2.id)
     @invoice_customer3 = create(:invoice, customer: @customer3, status: 1, coupon_id: @coupon3.id)
-    @invoice_customer4 = create(:invoice, customer: @customer4, status: 1, coupon_id: @coupon4.id)
-    @invoice_customer5 = create(:invoice, customer: @customer5, status: 1, coupon_id: @coupon5.id)
+    @invoice_customer4 = create(:invoice, customer: @customer4, status: 1)
+    @invoice_customer5 = create(:invoice, customer: @customer5, status: 1)
     @invoice_customer6 = create(:invoice, customer: @customer6, status: 1)
 
     @invoice_items1 = create(:invoice_item, invoice: @invoice_customer1, item: @table, status: 0 ) #pending
@@ -111,13 +111,20 @@ RSpec.describe 'merchant dashboard show page', type: :feature do
       expect(current_path).to eq(merchant_coupons_path(@merchant1))
       # Where I see all of my coupon names including their amount off
       # And each coupon's name is also a link to its show page.
-      within ".coupons .coupon-#{@coupon1.id}" do
-        expect(page).to have_content("Coupon name: #{@coupon1.name}") 
-        expect(page).to have_link("#{@coupon1.name}", href: merchant_coupon_path(@merchant1, @coupon1)) 
-        expect(page).to have_content("Discount amount: #{@coupon1.discount_amount}") 
-        expect(page).to have_content("Percent discount?: #{@coupon1.percent_off}")
-        expect(page).to_not have_content("Coupon name: #{@coupon2.name}")
-      end
+      expect(page).to have_content("Coupon name: #{@coupon1.name}") 
+      expect(page).to have_link("#{@coupon1.name}", href: merchant_coupon_path(@merchant1, @coupon1)) 
+      expect(page).to have_content("Discount amount: #{@coupon1.discount_amount}") 
+      expect(page).to have_content("Percent discount?: #{@coupon1.percent_off}")
+
+      expect(page).to have_content("Coupon name: #{@coupon2.name}") 
+      expect(page).to have_link("#{@coupon2.name}", href: merchant_coupon_path(@merchant1, @coupon2)) 
+      expect(page).to have_content("Discount amount: #{@coupon2.discount_amount}") 
+      expect(page).to have_content("Percent discount?: #{@coupon2.percent_off}")
+
+      expect(page).to have_content("Coupon name: #{@coupon3.name}") 
+      expect(page).to have_link("#{@coupon3.name}", href: merchant_coupon_path(@merchant1, @coupon3)) 
+      expect(page).to have_content("Discount amount: #{@coupon3.discount_amount}") 
+      expect(page).to have_content("Percent discount?: #{@coupon3.percent_off}")
     end
   end
 end

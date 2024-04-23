@@ -32,6 +32,10 @@ class Invoice < ApplicationRecord
     .sum("invoice_items.unit_price * invoice_items.quantity")
   end
 
+  def coupon_applies_to_merchant_items_only_total_revenue
+    items.where(merchant: coupon.merchant).joins(:invoice_items).sum("invoice_items.unit_price * invoice_items.quantity")
+  end
+  
   def grand_total
     total_revenue - coupon_discount_amount
   end
