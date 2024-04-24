@@ -35,11 +35,6 @@ class CouponsController < ApplicationController
       if params[:new_status]
         @coupon.update(status: params[:new_status])
         redirect_to merchant_coupon_path(@merchant, @coupon)
-      # elsif params[:name].present?
-      #   if @coupon.update(coupon_params)
-      #     flash[:notice] = "#{@coupon.name} info updated successfully."
-      #     redirect_to merchant_coupon_path(@merchant, @coupon)
-      #   end
       end
     end
   end

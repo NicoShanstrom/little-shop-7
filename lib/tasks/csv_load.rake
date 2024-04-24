@@ -40,7 +40,7 @@ namespace :csv_load do
       ActiveRecord::Base.connection.reset_pk_sequence!('items')
       puts 'Items successful'
     end
-
+  
   desc "Imports merchants data"
   task :merchants => :environment do    
     Merchant.destroy_all
