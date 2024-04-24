@@ -29,8 +29,8 @@ class CouponsController < ApplicationController
     @merchant = Merchant.find(params[:merchant_id])
     @coupon = @merchant.coupons.find(params[:id])
     if params[:new_status] == 'inactive' && @coupon.invoices.in_progress.any?
-      flash.now[:notice] = "Can't deactivate coupon with pending invoices" #flash.now since we are on the current request
-      render 'coupons/show', merchant: @merchant, coupon: @coupon #doesnt like redirect for sad paths
+      flash.now[:notice] = "Can't deactivate coupon with pending invoices" 
+      render 'coupons/show', merchant: @merchant, coupon: @coupon 
     else
       if params[:new_status]
         @coupon.update(status: params[:new_status])
