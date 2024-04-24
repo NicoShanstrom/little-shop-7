@@ -177,4 +177,24 @@ RSpec.describe "the admin invoices show page" do
       expect(page).to_not have_content("Coupon used on invoice name:")
     end
   end
+
+  describe 'An invoice cannot be negative after a coupon' do
+    it 'doesnt let a coupon make an invoice negative, it goes to zero' do
+      merchant0 = create(:merchant, status: 'enabled')
+      coupon1 = merchant0.coupons.create!(name: "10 off", code: "10 off", discount_amount: 10, percent_off: true, status: 0)
+      coupon2 = merchant0.coupons.create!(name: "10 off", code: "10 dolla off", discount_amount: 10, percent_off: false, status: 0)
+      table = create(:item, name: "table", merchant: merchant0, status: 'enabled', unit_price: 10)
+      bowl = create(:item, name: "bowl", merchant: merchant0, status: 'enabled', unit_price: 5)
+      customer1 = create(:customer)
+      invoice_1 = create(:invoice, customer: customer1, status: 1, coupon_id: coupon1.id)
+      invoice_2 = create(:invoice, customer: customer1, status: 1, coupon_id: coupon2.id)
+      invoice_item1 = create(:invoice_item, quantity: 1, unit_price: 10, invoice: invoice_1, item: table, status: 0 )
+      invoice2_item1 = create(:invoice_item, quantity: 1, unit_price: 5, invoice: invoice_2, item: bowl, status: 0 )
+      transactions_invoice1 = create(:transaction, invoice: invoice_1, result: 1)
+
+      visit admin_invoice_path(invoice_2)
+      expect(page).to have_content("Total Revenue: $0.05")
+      expect(page).to have_content("Grand Total: $0.00")
+    end
+  end
 end
