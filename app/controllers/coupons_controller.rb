@@ -1,6 +1,5 @@
 class CouponsController < ApplicationController
   def index
-    # require 'pry'; binding.pry
     @merchant = Merchant.find(params[:merchant_id])
     @merchant_coupons = @merchant.coupons.all
   end
@@ -29,7 +28,6 @@ class CouponsController < ApplicationController
   def update
     @merchant = Merchant.find(params[:merchant_id])
     @coupon = @merchant.coupons.find(params[:id])
-    # require 'pry'; binding.pry
     if params[:new_status] == 'inactive' && @coupon.invoices.in_progress.any?
       flash.now[:notice] = "Can't deactivate coupon with pending invoices" #flash.now since we are on the current request
       render 'coupons/show', merchant: @merchant, coupon: @coupon #doesnt like redirect for sad paths
