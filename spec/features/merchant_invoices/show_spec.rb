@@ -129,7 +129,6 @@ RSpec.describe 'Merchant Invoices Show' do
         # And I see the grand total revenue after the discount was applied
         expect(page).to have_content("Invoice Grand Total: #{@invoice1.grand_total}")
         # And I see the name and code of the coupon used as a link to that coupon's show page.
-        # require 'pry'; binding.pry
         expect(page).to have_content("Coupon used: #{@invoice1.coupon.name} - #{@invoice1.coupon.id}")
       end
     end

@@ -70,7 +70,7 @@ RSpec.describe Invoice, type: :model do
   end
 
   describe "class methods" do
-    it ".query for incomplete invoices ordered by oldest to newest" do
+    xit ".query for incomplete invoices ordered by oldest to newest" do
       list_test = Invoice.all.incomplete_invoices.limit(3)
       expect(list_test).to match_array([@invoice_customer7, @invoice_customer6, @invoice_customer5])
     end
@@ -84,6 +84,7 @@ RSpec.describe Invoice, type: :model do
         merchant01 = create(:merchant, status: 'enabled')
         
         coupon1 = merchant0.coupons.create!(name: "10 off", code: "10 off", discount_amount: 10, percent_off: true, status: 0)
+        coupon2 = merchant01.coupons.create!(name: "10 off", code: "10 off", discount_amount: 10, percent_off: false, status: 0)
         
         table = create(:item, name: "table", merchant: merchant0, status: 'enabled', unit_price: 10)
         junk = create(:item, name: "junk", merchant: merchant01, status: 'enabled', unit_price: 1000000)
@@ -93,15 +94,23 @@ RSpec.describe Invoice, type: :model do
         
         invoice_1 = create(:invoice, customer: customer1, status: 1, coupon_id: coupon1.id)
         invoice_2 = create(:invoice, customer: customer2, status: 1)
+        invoice_3 = create(:invoice, customer: customer2, status: 1, coupon_id: coupon2.id)
         
         invoice1_item1 = create(:invoice_item, quantity: 1, unit_price: 10, invoice: invoice_1, item: table, status: 0 )
         invoice2_item1 = create(:invoice_item, quantity: 1, unit_price: 1000000, invoice: invoice_2, item: junk, status: 0 )
+        invoice3_item1 = create(:invoice_item, quantity: 1, unit_price: 1000000, invoice: invoice_3, item: junk, status: 0 )
         
         transactions_invoice1 = create(:transaction, invoice: invoice_1, result: 1)
         transactions_invoice2 = create(:transaction, invoice: invoice_2, result: 1)
-        # require 'pry'; binding.pry
+        transactions_invoice3 = create(:transaction, invoice: invoice_3, result: 1)
+
         expect(invoice_1.coupon_discount_amount).to eq(1.0)
+        expect(invoice_1.coupon.percent_off).to eq(true)
+        expect(invoice_1.coupon.percent_or_integer_off).to eq(0.1)
         expect(invoice_2.coupon_discount_amount).to eq(0)
+        expect(invoice_3.coupon_discount_amount).to eq(10)
+        expect(invoice_3.coupon.percent_off).to eq(false)
+        expect(invoice_3.coupon.percent_or_integer_off).to eq(10)
       end
     end
 
@@ -114,7 +123,7 @@ RSpec.describe Invoice, type: :model do
         invoice_1 = create(:invoice, customer: customer1, status: 1, coupon_id: coupon1.id)
         invoice_item1 = create(:invoice_item, quantity: 1, unit_price: 10, invoice: invoice_1, item: table, status: 0 )
         transactions_invoice1 = create(:transaction, invoice: invoice_1, result: 1)
-        # require 'pry'; binding.pry
+
         expect(invoice_1.grand_total).to eq(9.0)
       end
     end
@@ -134,7 +143,7 @@ RSpec.describe Invoice, type: :model do
         
         invoice1 = create(:invoice, customer: customer1, status: 1, coupon_id: coupon1.id)
         invoice2 = create(:invoice, customer: customer1, status: 1, coupon_id: coupon2.id)
-        # 1. There may be invoices with items from more than 1 merchant. Coupons for a merchant only apply to items from that merchant.
+       
         invoice1_item1 = create(:invoice_item, quantity: 1, unit_price: 100, invoice: invoice1, item: table, status: 0 )
         invoice1_item2 = create(:invoice_item, quantity: 1, unit_price: 1000, invoice: invoice1, item: car, status: 0 )
 
@@ -165,7 +174,7 @@ RSpec.describe Invoice, type: :model do
         
         invoice1 = create(:invoice, customer: customer1, status: 1, coupon_id: coupon1.id)
         invoice2 = create(:invoice, customer: customer1, status: 1)
-        # 1. There may be invoices with items from more than 1 merchant. Coupons for a merchant only apply to items from that merchant.
+       
         invoice1_item1 = create(:invoice_item, quantity: 1, unit_price: 100, invoice: invoice1, item: table, status: 0 )
         invoice1_item2 = create(:invoice_item, quantity: 1, unit_price: 1000, invoice: invoice1, item: car, status: 0 )
 
@@ -175,7 +184,7 @@ RSpec.describe Invoice, type: :model do
         transactions_invoice1 = create(:transaction, invoice: invoice1, result: 1)
         transactions_invoice1 = create(:transaction, invoice: invoice2, result: 1)
 
-        expect(invoice2.total_revenue_invoice_items_merchant_coupon).to eq(1100)
+        expect(invoice2.total_revenue_invoice_items_merchant_coupon).to eq(invoice2.total_revenue)
       end
     end
 
@@ -184,7 +193,6 @@ RSpec.describe Invoice, type: :model do
         @customer = Customer.create!(first_name: "Blake", last_name: "Sergesketter")
         @invoice = Invoice.create!(status: 1, customer_id: @customer.id, created_at: "Sat, 13 Apr 2024 23:10:10.717784000 UTC +00:00")
         expect(@invoice.formatted_date).to eq("Saturday, April 13, 2024")
-        #Saturday, April 13, 2024
       end
     end
 

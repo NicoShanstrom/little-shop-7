@@ -37,7 +37,6 @@ class Invoice < ApplicationRecord
       InvoiceItem.joins(item: :merchant)
       .where("merchants.id = ? AND invoice_id = ?", coupon.merchant_id, self.id)
       .sum("invoice_items.unit_price * invoice_items.quantity")
-      # require 'pry'; binding.pry
     else
       total_revenue
     end

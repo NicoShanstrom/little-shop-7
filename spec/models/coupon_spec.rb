@@ -19,7 +19,6 @@ RSpec.describe Coupon, type: :model do
 
     @transactions_invoice1 = create_list(:transaction, 5, invoice: @invoice_customer1, result: 1)
     @transactions_invoice2 = create_list(:transaction, 4, invoice: @invoice_customer2, result: 1)
-    # require 'pry'; binding.pry
   end
 
   describe 'relationships' do
@@ -53,7 +52,6 @@ RSpec.describe Coupon, type: :model do
         coupon6.save
         
         expect(coupon6.errors[:base]).to include("Merchant can't have more than 5 active coupons")
-        # require 'pry'; binding.pry
       end
     end
 
@@ -74,5 +72,4 @@ RSpec.describe Coupon, type: :model do
       end
     end
   end
-
 end

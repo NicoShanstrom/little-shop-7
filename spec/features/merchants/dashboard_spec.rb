@@ -10,7 +10,6 @@ RSpec.describe 'merchant dashboard show page', type: :feature do
     # @coupon4 = @merchant1.coupons.create!(name: "15 off", code: "Buy more", discount_amount: 15)
     # @coupon5 = @merchant1.coupons.create!(name: "11 off", code: "Make a wish", discount_amount: 11, percent_off: false)
     # @coupon6 = @merchant1.coupons.create!(name: "40 off", code: "40 off of freedom", discount_amount: 40, status: "inactive")
-    # require 'pry'; binding.pry
 
     @table = create(:item, name: "table", merchant: @merchant1)
     @pen = create(:item, name: "pen", merchant: @merchant1)
@@ -47,7 +46,6 @@ RSpec.describe 'merchant dashboard show page', type: :feature do
     @transactions_invoice4 = create_list(:transaction, 7, invoice: @invoice_customer4, result: 1)
     @transactions_invoice5 = create_list(:transaction, 3, invoice: @invoice_customer5, result: 1)
     @transactions_invoice6 = create_list(:transaction, 9, invoice: @invoice_customer6, result: 1)
-    # require 'pry'; binding.pry
     visit dashboard_merchant_path(@merchant1)
   end
 

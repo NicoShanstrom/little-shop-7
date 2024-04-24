@@ -143,18 +143,22 @@ RSpec.describe "the admin invoices show page" do
 
       table = create(:item, name: "table", merchant: merchant0, status: 'enabled', unit_price: 100)
       car = create(:item, name: "car", merchant: merchant01, status: 'enabled', unit_price: 1000)
+      bike = create(:item, name: "bike", merchant: merchant01, status: 'enabled', unit_price: 333)
       
       customer1 = create(:customer)
       customer2 = create(:customer)
       
       invoice1 = create(:invoice, customer: customer1, status: 1, coupon_id: coupon1.id)
       invoice2 = create(:invoice, customer: customer2, status: 1, coupon_id: coupon2.id)
+      invoice3 = create(:invoice, customer: customer2, status: 1)
       # 1. There may be invoices with items from more than 1 merchant. Coupons for a merchant only apply to items from that merchant.
       invoice1_item1 = create(:invoice_item, quantity: 1, unit_price: 100, invoice: invoice1, item: table, status: 0 )
       invoice1_item2 = create(:invoice_item, quantity: 1, unit_price: 1000, invoice: invoice1, item: car, status: 0 )
 
       invoice2_item1 = create(:invoice_item, quantity: 1, unit_price: 100, invoice: invoice2, item: table, status: 0 )
       invoice2_item2 = create(:invoice_item, quantity: 1, unit_price: 1000, invoice: invoice2, item: car, status: 0 )
+      invoice3_item1 = create(:invoice_item, quantity: 1, unit_price: 1000, invoice: invoice3, item: car, status: 0 )
+      invoice3_item2 = create(:invoice_item, quantity: 1, unit_price: 333, invoice: invoice3, item: bike, status: 0 )
       
       transactions_invoice1 = create(:transaction, invoice: invoice1, result: 1)
       transactions_invoice1 = create(:transaction, invoice: invoice2, result: 1)
@@ -165,8 +169,12 @@ RSpec.describe "the admin invoices show page" do
       expect(page).to have_content("Coupon used on invoice code: #{coupon2.code}")
       # And I see both the subtotal revenue from that invoice (before coupon) and the grand total revenue (after coupon) for this invoice.
       expect(page).to have_content("Total Revenue: $11.00")
-      # require 'pry'; binding.pry
       expect(page).to have_content("Grand Total: $10.80")
+
+      visit admin_invoice_path(invoice3)
+      expect(page).to have_content("Total Revenue: $13.33")
+      expect(page).to have_content("Grand Total: $13.33")
+      expect(page).to_not have_content("Coupon used on invoice name:")
     end
   end
 end
