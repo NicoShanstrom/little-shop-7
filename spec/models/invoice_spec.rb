@@ -119,6 +119,66 @@ RSpec.describe Invoice, type: :model do
       end
     end
 
+    describe "#total_revenue_invoice_items_merchant_coupon" do
+      it "IF a coupon is present, returns ONLY the revenue of a SPECIFIC invoice's items associated with the merchant that OWNS the coupon" do
+        merchant0 = create(:merchant, status: 'enabled')
+        merchant01 = create(:merchant, status: 'enabled')
+
+        coupon1 = merchant0.coupons.create!(name: "70 off", code: "70 off", discount_amount: 70, percent_off: true, status: 0)
+        coupon2 = merchant01.coupons.create!(name: "10 off", code: "10 off", discount_amount: 20, percent_off: false, status: 0)
+
+        table = create(:item, name: "table", merchant: merchant0, status: 'enabled', unit_price: 100)
+        car = create(:item, name: "car", merchant: merchant01, status: 'enabled', unit_price: 1000)
+        
+        customer1 = create(:customer)
+        
+        invoice1 = create(:invoice, customer: customer1, status: 1, coupon_id: coupon1.id)
+        invoice2 = create(:invoice, customer: customer1, status: 1, coupon_id: coupon2.id)
+        # 1. There may be invoices with items from more than 1 merchant. Coupons for a merchant only apply to items from that merchant.
+        invoice1_item1 = create(:invoice_item, quantity: 1, unit_price: 100, invoice: invoice1, item: table, status: 0 )
+        invoice1_item2 = create(:invoice_item, quantity: 1, unit_price: 1000, invoice: invoice1, item: car, status: 0 )
+
+        invoice2_item1 = create(:invoice_item, quantity: 1, unit_price: 100, invoice: invoice2, item: table, status: 0 )
+        invoice2_item2 = create(:invoice_item, quantity: 1, unit_price: 1000, invoice: invoice2, item: car, status: 0 )
+        
+        transactions_invoice1 = create(:transaction, invoice: invoice1, result: 1)
+        transactions_invoice1 = create(:transaction, invoice: invoice2, result: 1)
+
+        expect(invoice1.total_revenue_invoice_items_merchant_coupon).to eq(100)
+        expect(invoice2.total_revenue_invoice_items_merchant_coupon).to eq(1000)
+        
+        expect(invoice1.total_revenue_invoice_items_merchant_coupon).to_not eq(200)
+        expect(invoice2.total_revenue_invoice_items_merchant_coupon).to_not eq(2000)
+      end
+
+      it 'IF a coupon is NOT present, returns the total revenue of the invoice' do
+        merchant0 = create(:merchant, status: 'enabled')
+        merchant01 = create(:merchant, status: 'enabled')
+
+        coupon1 = merchant0.coupons.create!(name: "70 off", code: "70 off", discount_amount: 70, percent_off: true, status: 0)
+        coupon2 = merchant01.coupons.create!(name: "10 off", code: "10 off", discount_amount: 20, percent_off: false, status: 0)
+
+        table = create(:item, name: "table", merchant: merchant0, status: 'enabled', unit_price: 100)
+        car = create(:item, name: "car", merchant: merchant01, status: 'enabled', unit_price: 1000)
+        
+        customer1 = create(:customer)
+        
+        invoice1 = create(:invoice, customer: customer1, status: 1, coupon_id: coupon1.id)
+        invoice2 = create(:invoice, customer: customer1, status: 1)
+        # 1. There may be invoices with items from more than 1 merchant. Coupons for a merchant only apply to items from that merchant.
+        invoice1_item1 = create(:invoice_item, quantity: 1, unit_price: 100, invoice: invoice1, item: table, status: 0 )
+        invoice1_item2 = create(:invoice_item, quantity: 1, unit_price: 1000, invoice: invoice1, item: car, status: 0 )
+
+        invoice2_item1 = create(:invoice_item, quantity: 1, unit_price: 100, invoice: invoice2, item: table, status: 0 )
+        invoice2_item2 = create(:invoice_item, quantity: 1, unit_price: 1000, invoice: invoice2, item: car, status: 0 )
+        
+        transactions_invoice1 = create(:transaction, invoice: invoice1, result: 1)
+        transactions_invoice1 = create(:transaction, invoice: invoice2, result: 1)
+
+        expect(invoice2.total_revenue_invoice_items_merchant_coupon).to eq(1100)
+      end
+    end
+
     describe 'formatted date' do
       it "#formatted_date" do
         @customer = Customer.create!(first_name: "Blake", last_name: "Sergesketter")
