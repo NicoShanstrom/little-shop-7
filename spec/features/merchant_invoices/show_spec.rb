@@ -125,9 +125,9 @@ RSpec.describe 'Merchant Invoices Show' do
       # When I visit one of my merchant invoice show pages
       within '#merchant_invoice_info' do
         # I see the subtotal for my merchant from this invoice (that is, the total that does not include coupon discounts)
-        expect(page).to have_content("Invoice Subtotal: #{@invoice1.total_revenue}")
+        expect(page).to have_content("Total Revenue: $2,150.00")
         # And I see the grand total revenue after the discount was applied
-        expect(page).to have_content("Invoice Grand Total: #{@invoice1.grand_total}")
+        expect(page).to have_content("Invoice Grand Total: $2,042.50")
         # And I see the name and code of the coupon used as a link to that coupon's show page.
         expect(page).to have_content("Coupon used: #{@invoice1.coupon.name} - #{@invoice1.coupon.id}")
       end
