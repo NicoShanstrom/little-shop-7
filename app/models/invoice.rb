@@ -42,8 +42,16 @@ class Invoice < ApplicationRecord
     end
   end
   
+  # def grand_total
+  #   total_revenue - coupon_discount_amount
+  # end
   def grand_total
-    total_revenue - coupon_discount_amount
+    total = total_revenue - coupon_discount_amount
+    if total.negative?
+      0
+    else
+      total
+    end
   end
 
   def coupon_discount_amount

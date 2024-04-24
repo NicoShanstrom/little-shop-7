@@ -118,13 +118,22 @@ RSpec.describe Invoice, type: :model do
       it 'calculates the grand total of an invoice using the coupons discount amount' do
         merchant0 = create(:merchant, status: 'enabled')
         coupon1 = merchant0.coupons.create!(name: "10 off", code: "10 off", discount_amount: 10, percent_off: true, status: 0)
+        coupon2 = merchant0.coupons.create!(name: "10 off", code: "10 dolla off", discount_amount: 10, percent_off: false, status: 0)
         table = create(:item, name: "table", merchant: merchant0, status: 'enabled', unit_price: 10)
+        bowl = create(:item, name: "bowl", merchant: merchant0, status: 'enabled', unit_price: 5)
         customer1 = create(:customer)
         invoice_1 = create(:invoice, customer: customer1, status: 1, coupon_id: coupon1.id)
+        invoice_2 = create(:invoice, customer: customer1, status: 1, coupon_id: coupon2.id)
         invoice_item1 = create(:invoice_item, quantity: 1, unit_price: 10, invoice: invoice_1, item: table, status: 0 )
+        invoice2_item1 = create(:invoice_item, quantity: 1, unit_price: 5, invoice: invoice_2, item: bowl, status: 0 )
         transactions_invoice1 = create(:transaction, invoice: invoice_1, result: 1)
-
+        # require 'pry'; binding.pry
         expect(invoice_1.grand_total).to eq(9.0)
+        
+        expect(invoice_2.total_revenue).to eq(5)
+        expect(invoice_2.coupon.discount_amount).to eq(10)
+        expect(invoice_2.coupon.percent_off).to eq(false)
+        expect(invoice_2.grand_total).to eq(0)
       end
     end
 
