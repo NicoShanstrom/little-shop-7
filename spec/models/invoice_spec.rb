@@ -81,14 +81,27 @@ RSpec.describe Invoice, type: :model do
     describe '#coupon_discount_amount' do
       it 'adjusts the discount_amount to a decimal if a coupon has a percent_off value of true, returns 0 if no coupon' do
         merchant0 = create(:merchant, status: 'enabled')
+        merchant01 = create(:merchant, status: 'enabled')
+        
         coupon1 = merchant0.coupons.create!(name: "10 off", code: "10 off", discount_amount: 10, percent_off: true, status: 0)
+        
         table = create(:item, name: "table", merchant: merchant0, status: 'enabled', unit_price: 10)
+        junk = create(:item, name: "junk", merchant: merchant01, status: 'enabled', unit_price: 1000000)
+        
         customer1 = create(:customer)
+        customer2 = create(:customer)
+        
         invoice_1 = create(:invoice, customer: customer1, status: 1, coupon_id: coupon1.id)
-        invoice_item1 = create(:invoice_item, quantity: 1, unit_price: 10, invoice: invoice_1, item: table, status: 0 )
+        invoice_2 = create(:invoice, customer: customer2, status: 1)
+        
+        invoice1_item1 = create(:invoice_item, quantity: 1, unit_price: 10, invoice: invoice_1, item: table, status: 0 )
+        invoice2_item1 = create(:invoice_item, quantity: 1, unit_price: 1000000, invoice: invoice_2, item: junk, status: 0 )
+        
         transactions_invoice1 = create(:transaction, invoice: invoice_1, result: 1)
+        transactions_invoice2 = create(:transaction, invoice: invoice_2, result: 1)
         # require 'pry'; binding.pry
         expect(invoice_1.coupon_discount_amount).to eq(1.0)
+        expect(invoice_2.coupon_discount_amount).to eq(0)
       end
     end
 

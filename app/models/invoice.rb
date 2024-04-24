@@ -57,11 +57,5 @@ class Invoice < ApplicationRecord
     else
       0
     end
-    # coupon&.percent_or_integer_off || 0
-    # if coupon.nil?
-    #   0
-    # else
-    #   coupon.percent_or_integer_off
-    # end
   end
 end
